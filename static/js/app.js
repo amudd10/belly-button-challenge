@@ -1,4 +1,4 @@
-// OUTLINE
+//OUTLINE
 // 1.  Webpage will have the following:
 //     *  Dropdown that will allow selection of a name/id
 //     *  Horizontal bar chart that shows data related to only the id
@@ -58,11 +58,14 @@
         names.forEach((name) => {
             d3.select('#selDataset').append("option").text(name);
         })
-        
+        //sample variables
+        let dataValue = data.samples[0].sample_values;
+        let dataLabel = data.samples[0].otu_labels;
+        let dataIDs = data.samples[0].otu_ids;
         //Top 10 OTU's for individual
-        let top10value =  data.samples[0].sample_values.slice(0,10).reverse();
-        let top10label = data.samples[0].otu_labels.slice(0,10).reverse();
-        let top10ids = data.samples[0].otu_ids.slice(0,10).reverse();
+        let top10value =  dataValue.slice(0,10).reverse();
+        let top10label =  dataLabel.slice(0,10).reverse();
+        let top10ids = dataIDs.slice(0,10).reverse();
 
         let OTUids = top10ids.map(e => "OTU " + e);
         console.log(`OTU IDs: ${OTUids}`)
@@ -81,6 +84,25 @@
         };
         //Plot
         Plotly.newPlot("bar", barData, layout);
+
+        let trace2 = {
+            x: dataIDs,
+            y: dataValue,
+            text: dataLabel,
+            mode: 'markers',
+            marker: {
+                color: dataIDs,
+                size:  dataValue
+            }
+
+        };
+        let bubbleData = [trace2];
+
+        let bubbleLayout = {
+            title: 'Bacteria Cultures Per Sample',   
+        };
+        //Plot Bubble Scatter
+        Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
 
 
