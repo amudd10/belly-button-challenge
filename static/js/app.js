@@ -38,24 +38,53 @@
 // SAMPLE STRUCTURE
 // 1.  Check inspector console to see if each function is running on page load
 //Cast URL to variable(constant)
-const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
+
 
 // function that contains instructions at page load/refresh
 // function does not run until called
-function init(){
-    // Fetch the json Data and console log it
-d3.json(aws).then(data => {
-    console.log(data);
-    console.log(data.names[0]);
 
-    let names = data.names;
-
-    names.forEach((name) => {
-        d3.select('#selDataset').append("option").text(name);
-    });
-});
     // code that runs once (only on page load or refresh)
+    //Cast URL to variable(constant)
+    const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
 
+    function init() {
+        // Fetch the json Data and console log it
+    d3.json(aws).then(data => {
+        console.log(data);
+        console.log(data.names[0]);
+    
+        let names = data.names;
+    
+        names.forEach((name) => {
+            d3.select('#selDataset').append("option").text(name);
+        })
+        
+        //Top 10 OTU's for individual
+        let top10value =  data.samples[0].sample_values.slice(0,10).reverse();
+        let top10label = data.samples[0].otu_labels.slice(0,10).reverse();
+        let top10ids = data.samples[0].otu_ids.slice(0,10).reverse();
+
+        let OTUids = top10ids.map(e => "OTU " + e);
+        console.log(`OTU IDs: ${OTUids}`)
+
+        let trace1 = {
+            x: top10value,
+            y: OTUids,
+            text: top10label,
+            type: 'bar',
+            orientation: 'h'
+        };
+        let barData = [trace1];
+
+        let layout = {
+            title: "TOP 10 OTU",
+        };
+        //Plot
+        Plotly.newPlot("bar", barData, layout);
+
+
+
+        });
     // this checks that our initial function runs.
     console.log("The Init() function ran")
 
