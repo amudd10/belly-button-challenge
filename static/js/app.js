@@ -80,11 +80,11 @@
         let barData = [trace1];
 
         let layout = {
-            title: "TOP 10 OTU",
+            title: "Top 10 Bacteria Cultures Found ",
         };
         //Plot
         Plotly.newPlot("bar", barData, layout);
-
+        //Bubble Scatter
         let trace2 = {
             x: dataIDs,
             y: dataValue,
@@ -104,9 +104,54 @@
         //Plot Bubble Scatter
         Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
-
+        // Demographic Panel
+        d3.json(aws).then(data => {
+            let panelData = data.metadata.filter(e => e.id === 940)[0];
+            console.log(panelData);
+            let demoPanel = d3.select(`#sample-metadata`);
+                    demoPanel.html("");
+            Object.entries(panelData).forEach((key) => {
+                // console.log(key, panelData[key]);
+                demoPanel.append('p').text(key[0] + " : " + key[1] + "\n");
+                // (key,panelData) => d3.select(`#sample-metadata``)
+              });
+              
+    
 
         });
+        //Gauge 
+        let wfreqDef = panelData.wfreq;
+        var guageData = [
+            {
+              domain: { x: [0, 1], y: [0, 1] },
+              value:  wfreqDef,
+              title: { text: "Belly Button Washing Frequency <br> Scrubs per Week", font: { size: 24} },
+              type: "indicator",
+              mode: "gauge+number+delta",
+              delta: { reference: 380 },
+              gauge: {
+                axis: { range: [null, 10], tickwidth: 1, tickcolor: "darkblue" },
+                steps: [
+                  { range: [0, 2], color: "rgb(255, 217, 102)" },
+                  { range: [2, 4], color: "rgb(102, 255, 204)" },
+                  {range: [4,6], color: "rgb(140, 102, 255)"},
+                  {range: [6,8], color: "rgb(255, 102, 179)"}
+                ],
+                threshold: {
+                  line: { color: "rgb(255, 51, 204)", width: 4 },
+                  thickness: 0.75,
+                  value: 490
+                }
+              }
+            }
+          ];
+          
+          var guageLayout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
+          Plotly.newPlot('guage', guageData, guageLayout);
+
+    });
+
+
     // this checks that our initial function runs.
     console.log("The Init() function ran")
 
@@ -118,7 +163,7 @@
     createBar('940')
     createSummary('940')
 
-}
+    };
 
 // function that runs whenever the dropdown is changed
 // this function is in the HTML and is called with an input called 'this.value'
@@ -157,7 +202,7 @@ function createSummary(id){
 
 // function called, runs init instructions
 // runs only on load and refresh of browser page
-init()
+init();
 
 
 
