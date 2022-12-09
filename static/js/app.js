@@ -14,7 +14,7 @@ function init() {
         console.log(data.names[0]);
 
         // create dropdown/select
-        let names = data.names;
+        const names = data.names;
 
         names.forEach((name) => {
             d3.select('#selDataset').append("option").text(name);
@@ -32,24 +32,27 @@ function init() {
 
     });
 }
-   
 
-    // function that runs whenever the dropdown is changed
-    // this function is in the HTML and is called with an input called 'this.value'
-    // that comes from the select element (dropdown)
-    function optionChanged(newID) {
-        // code that updates graphics
-        // one way is to recall each function
-        createScatter(newID)
-        createBar(newID)
-        createSummary(newID)
 
-    }
+// function that runs whenever the dropdown is changed
+// this function is in the HTML and is called with an input called 'this.value'
+// that comes from the select element (dropdown)
+function optionChanged(newID) {
+    // code that updates graphics
+    // one way is to recall each function
+    createScatter(newID)
+    createBar(newID)
+    createSummary(newID)
 
-    function createBar(id) {
-        const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
-        // code that makes scatter plot at id='bar'
-        //sample variables
+}
+
+function createBar(id) {
+    const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json"
+    // code that makes scatter plot at id='bar'
+    //sample variables
+    d3.json(aws).then(data => {
+        console.log(data);
+
         let dataValue = data.samples.sample_values;
         let dataLabel = data.samples.otu_labels;
         let dataIDs = data.samples.otu_ids;
@@ -81,95 +84,104 @@ function init() {
         console.log(`This function generates bar chart of ${id} `)
     }
 
-    function createScatter(id) {
-        const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-        // code that makes bar chart at id='bubble'
-        //sample variables
-        let dataValue = data.samples.sample_values;
-        let dataLabel = data.samples.otu_labels;
-        let dataIDs = data.samples.otu_ids;
+function createScatter(id) {
+    const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
+    d3.json(aws).then(data => {
+        console.log(data);
+                // code that makes bar chart at id='bubble'
+                //sample variables
+                let dataValue = data.samples.sample_values;
+                let dataLabel = data.samples.otu_labels;
+                let dataIDs = data.samples.otu_ids;
 
-        //Bubble Scatter
-        let trace2 = {
-            x: dataIDs,
-            y: dataValue,
-            text: dataLabel,
-            mode: 'markers',
-            marker: {
-                color: dataIDs,
-                size: dataValue
+                //Bubble Scatter
+                let trace2 = {
+                    x: dataIDs,
+                    y: dataValue,
+                    text: dataLabel,
+                    mode: 'markers',
+                    marker: {
+                        color: dataIDs,
+                        size: dataValue
+                    }
+
+                };
+                let bubbleData = [trace2];
+
+                let bubbleLayout = {
+                    title: 'Bacteria Cultures Per Sample',
+                };
+                //Plot Bubble Scatter
+                Plotly.newPlot('bubble', bubbleData, bubbleLayout);
+
+
+                // checking to see if function is running
+                console.log(`This function generates scatter plot of ${id} `)
+
             }
-
-        };
-        let bubbleData = [trace2];
-
-        let bubbleLayout = {
-            title: 'Bacteria Cultures Per Sample',
-        };
-        //Plot Bubble Scatter
-        Plotly.newPlot('bubble', bubbleData, bubbleLayout);
-
-
-        // checking to see if function is running
-        console.log(`This function generates scatter plot of ${id} `)
-
-    }
 
     function createSummary(id) {
-        const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-        // code that makes list, paragraph, text/linebreaks at id='sample-meta'
-        let panelData = data.metadata.filter(e => e.id === id)[0];
-        console.log(panelData);
-        let demoPanel = d3.select(`#sample-metadata`);
-        demoPanel.html("");
-        Object.entries(panelData).forEach((key) => {
-            // console.log(key, panelData[key]);
-            demoPanel.append('p').text(key[0] + " : " + key[1] + "\n");
-            // (key,panelData) => d3.select(`#sample-metadata``)
-        });
-        // code that makes list, paragraph, text/linebreaks at id='sample-meta'
+                    const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-        // checking to see if function is running
-        console.log(`This function generates summary info of ${id} `)
-    }
+                    d3.json(aws).then(data => {
+                        console.log(data);
+                        // code that makes list, paragraph, text/linebreaks at id='sample-meta'
+                        let panelData = data.metadata.filter(e => e.id === id)[0];
+                        console.log(panelData);
+                        let demoPanel = d3.select(`#sample-metadata`);
+                        demoPanel.html("");
+                        Object.entries(panelData).forEach((key) => {
+                            // console.log(key, panelData[key]);
+                            demoPanel.append('p').text(key[0] + " : " + key[1] + "\n");
+                            // (key,panelData) => d3.select(`#sample-metadata``)
+                        });
+                        // code that makes list, paragraph, text/linebreaks at id='sample-meta'
+
+                        // checking to see if function is running
+                        console.log(`This function generates summary info of ${id} `)
+                    }
 
     function createGauge(id) {
-        const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-        let panelData = data.metadata.filter(e => e.id === id)[0];
-        let wfreqDef = panelData.wfreq;
-        var guageData = [
-            {
-                domain: { x: [0, 1], y: [0, 1] },
-                value: wfreqDef,
-                title: { text: "Belly Button Washing Frequency <br> Scrubs per Week", font: { size: 24 } },
-                type: "indicator",
-                mode: "gauge+number+delta",
-                delta: { reference: 380 },
-                gauge: {
-                    axis: { range: [null, 10], tickwidth: 1, tickcolor: "darkblue" },
-                    steps: [
-                        { range: [0, 2], color: "rgb(0, 128, 64)" },
-                        { range: [2, 4], color: "rgb(0, 128, 96)" },
-                        { range: [4, 6], color: "rgb(0, 128, 128)" },
-                        { range: [6, 8], color: "rgb(0, 96, 128)" },
-                        { range: [8, 10], color: "rgb(0, 64, 128)" }
-                    ],
-                    threshold: {
-                        line: { color: "rgb(255, 102, 0)", width: 4 },
-                        thickness: 0.75,
-                        value: 490
-                    }
-                }
-            }
-        ];
+                            const aws = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-        var guageLayout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
-        Plotly.newPlot('gauge', guageData, guageLayout);
-        // checking to see if function is running
-        console.log(`This function generates scatter plot of ${id} `)
+                            d3.json(aws).then(data => {
+                                console.log(data);
+
+                                let panelData = data.metadata.filter(e => e.id === id)[0];
+                                let wfreqDef = panelData.wfreq;
+                                var guageData = [
+                                    {
+                                        domain: { x: [0, 1], y: [0, 1] },
+                                        value: wfreqDef,
+                                        title: { text: "Belly Button Washing Frequency <br> Scrubs per Week", font: { size: 24 } },
+                                        type: "indicator",
+                                        mode: "gauge+number+delta",
+                                        delta: { reference: 380 },
+                                        gauge: {
+                                            axis: { range: [null, 10], tickwidth: 1, tickcolor: "darkblue" },
+                                            steps: [
+                                                { range: [0, 2], color: "rgb(0, 128, 64)" },
+                                                { range: [2, 4], color: "rgb(0, 128, 96)" },
+                                                { range: [4, 6], color: "rgb(0, 128, 128)" },
+                                                { range: [6, 8], color: "rgb(0, 96, 128)" },
+                                                { range: [8, 10], color: "rgb(0, 64, 128)" }
+                                            ],
+                                            threshold: {
+                                                line: { color: "rgb(255, 102, 0)", width: 4 },
+                                                thickness: 0.75,
+                                                value: 490
+                                            }
+                                        }
+                                    }
+                                ];
+
+                                var guageLayout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
+                                Plotly.newPlot('gauge', guageData, guageLayout);
+                                // checking to see if function is running
+                                console.log(`This function generates scatter plot of ${id} `)
 
 
-    }
+                            }
 
 
     // function called, runs init instructions
